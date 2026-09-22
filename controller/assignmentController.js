@@ -92,9 +92,41 @@ const updateAssignment = async ( req, res) => {
     }
 }
 
+const deleteAssignment = async ( req, res ) => {
+    const id = req.params.id;
+    const queryToFind = `Select * from users where id = $1;`;
+
+    try {
+        const result = pool.query(queryToFind, [id]);
+    } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : "Something went wrong"
+        return res.status(400).json({
+            success: false,
+            message: errorMessage
+        })
+    }
+
+    const queryToDelete = `delete from users where id = $1;`;
+
+    try {
+        await pool.query(queryUpdate, [id]);
+        return res.status(200).json({
+            success: true,
+            message: "successfully updated value"
+        })
+    } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : "Something went wrong"
+        return res.status(400).json({
+            success: false,
+            message: errorMessage
+        })
+    }
+
+}
 
 module.exports = {
     createAssignment,
     getAssignments,
-    updateAssignment
+    updateAssignment,
+    deleteAssignment
 }
