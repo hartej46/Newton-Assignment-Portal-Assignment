@@ -30,8 +30,38 @@ const createAssignment = async (req, res) => {
     }
 }
 
+const getAssignments = async( req, res) => {
+    const submittedQueries = req.query?.submitted || null;
+    let query = `Select * FROM users;`;
+    let result;
+    try {
+        result = await pool.query(query);
+        
+    } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : "Something went wrong";
+        console.log(error)
+        return res.status(400).json({
+            success: false,
+            message: errorMessage
+        })
+    }
+
+    let rows = result.rows;
+
+    if (submittedQueries){
+        rows = rows.map( assignment => assignment.submitted == submittedQueries);
+    }
+
+    return res.status(201).json({
+            success: true,
+            message: "Successfully inserted value",
+            data : rows
+        })
+}
+
 
 
 module.exports = {
-    createAssignment
+    createAssignment,
+    getAssignments
 }
